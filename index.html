@@ -1,0 +1,279 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="description" content="Decennium: RPG 2D sobre escolhas e consequências, trabalho de conclusão do curso Técnico em Programação de Jogos Digitais.">
+<title>Decennium — RPG 2D sobre escolhas e consequências</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@400;700;900&family=Cinzel:wght@500;700&family=IM+Fell+English:ital@0;1&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#17100b;--bg2:#21170f;--panel:#2a1d12;--ink:#ecdcb6;--mute:#b9a47c;--gold:#d9a93f;--blood:#d65a45;--moss:#86a64f;--line:#55402a;
+--hd:"Cinzel Decorative","Cinzel","Trajan Pro",Georgia,serif;--hd2:"Cinzel","Trajan Pro",Georgia,serif;--bd:"IM Fell English","Palatino Linotype",Palatino,Georgia,serif;box-sizing:border-box;
+padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media (prefers-color-scheme:light){:root:not([data-theme="dark"]){--bg:#eadbb0;--bg2:#dec88f;--panel:#f2e5c1;--ink:#2b1a0b;--mute:#5b4426;--gold:#7d4e0c;--blood:#8b1e16;--moss:#44602a;--line:#a98a52}}
+:root[data-theme="light"]{--bg:#eadbb0;--bg2:#dec88f;--panel:#f2e5c1;--ink:#2b1a0b;--mute:#5b4426;--gold:#7d4e0c;--blood:#8b1e16;--moss:#44602a;--line:#a98a52}
+:root[data-theme="dark"]{--bg:#17100b;--bg2:#21170f;--panel:#2a1d12;--ink:#ecdcb6;--mute:#b9a47c;--gold:#d9a93f;--blood:#d65a45;--moss:#86a64f;--line:#55402a}
+*,*::before,*::after{box-sizing:inherit}
+html{scroll-behavior:smooth;scroll-padding-top:calc(env(safe-area-inset-top,0px) + 64px)}
+body{margin:0;background:radial-gradient(ellipse at 50% 0,rgba(217,169,63,.08),transparent 55%) no-repeat,var(--bg);color:var(--ink);font:400 clamp(1.12rem,1.04rem + .3vw,1.28rem)/1.6 var(--bd);-webkit-text-size-adjust:100%}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);background:var(--bg);z-index:30}
+/* textura de pergaminho */
+body::after{content:"";position:fixed;inset:0;pointer-events:none;z-index:40;opacity:.07;mix-blend-mode:overlay;background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='220' height='220'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='3' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  0 0 0 .9 0'/></filter><rect width='220' height='220' filter='url(%23n)'/></svg>")}
+h1,h2,h3{font-family:var(--hd2);line-height:1.15;margin:0;letter-spacing:.03em}
+h2{font-family:var(--hd);font-size:clamp(1.55rem,1.1rem + 2vw,2.4rem);font-weight:700;margin-bottom:.35em}
+h3{font-size:1.1rem;font-weight:700}
+p{margin:.6em 0;max-width:68ch}
+a{color:var(--gold)}
+:focus-visible{outline:3px solid var(--gold);outline-offset:3px}
+svg{display:block}
+.wrap{width:min(1100px,100% - 2.5rem);margin-inline:auto}
+section{padding:clamp(3.5rem,8vw,6.5rem) 0}
+.alt{background:var(--bg2);border-block:1px solid var(--line)}
+.lead{font-size:1.15em;color:var(--mute)}
+.orn{width:min(240px,70%);height:16px;color:var(--gold);margin:.15rem 0 1.3rem}
+/* nav */
+nav{position:sticky;top:env(safe-area-inset-top,0px);z-index:20;background:color-mix(in srgb,var(--bg) 94%,transparent);backdrop-filter:blur(8px);border-bottom:3px double var(--gold)}
+nav .wrap{display:flex;align-items:center;gap:1.2rem;height:58px}
+.brand{display:flex;align-items:center;gap:.6rem;font:700 .95rem var(--hd);color:var(--gold);text-decoration:none;white-space:nowrap}
+.links{display:flex;gap:1.2rem;overflow-x:auto;scrollbar-width:none;margin-left:auto}
+.links::-webkit-scrollbar{display:none}
+.links a{font:500 .8rem var(--hd2);letter-spacing:.08em;text-transform:uppercase;color:var(--mute);text-decoration:none;white-space:nowrap;padding:.6rem 0}
+.links a:hover{color:var(--gold)}
+@media(max-width:560px){.brand span{display:none}}
+/* hero */
+.hero{--ink:#f1e2bd;--mute:#d0bc92;--gold:#e0b04a;position:relative;overflow:hidden;color:var(--ink);padding:clamp(4rem,12vw,8rem) 0 0;background:linear-gradient(#0d0907 0%,#2a150f 52%,#6b2a17 100%);text-align:center;border-bottom:3px double var(--gold)}
+.hero .wrap{position:relative;z-index:2}
+.emblem{width:clamp(88px,16vw,140px);margin:0 auto 1.2rem;filter:drop-shadow(0 0 18px rgba(224,176,74,.35))}
+.hero h1{font-family:var(--hd);font-size:clamp(2.4rem,1.2rem + 7vw,5.8rem);font-weight:900;letter-spacing:.06em;color:#f3dfaa;text-shadow:0 0 28px rgba(224,176,74,.35),0 4px 28px #000}
+.hero .sub{font:italic 400 clamp(1.2rem,1rem + 1vw,1.65rem) var(--bd);color:var(--mute);margin:.8rem auto 1.8rem;max-width:34ch}
+.btns{display:flex;flex-wrap:wrap;gap:1rem;justify-content:center}
+.btn{display:inline-block;padding:.85rem 1.6rem;font:700 .85rem var(--hd2);letter-spacing:.1em;text-transform:uppercase;text-decoration:none;border:0;color:var(--gold);background:rgba(0,0,0,.3);border-radius:2px;min-height:44px;box-shadow:inset 0 0 0 1px var(--gold),inset 0 0 0 4px rgba(0,0,0,.45),inset 0 0 0 5px var(--gold)}
+.btn.p{background:linear-gradient(#f0c866,#c28f2a);color:#1d1208;box-shadow:inset 0 0 0 1px #7a5410,inset 0 0 0 4px rgba(255,235,170,.45),inset 0 0 0 5px #7a5410}
+.btn:hover{filter:brightness(1.15)}
+.scene{position:relative;margin-top:clamp(2rem,6vw,4rem);height:clamp(130px,22vw,240px)}
+.scene svg{position:absolute;inset:0;width:100%;height:100%}
+.mist{animation:drift 26s ease-in-out infinite alternate}
+@keyframes drift{from{transform:translateX(-3%)}to{transform:translateX(3%)}}
+@keyframes flick{0%,100%{opacity:.95}50%{opacity:.7}}
+.torch{animation:flick 3s ease-in-out infinite}
+@media(prefers-reduced-motion:reduce){.mist,.torch{animation:none}html{scroll-behavior:auto}}
+.facts{display:flex;flex-wrap:wrap;justify-content:center;gap:.5rem 1.6rem;margin:2rem 0 0;padding:0;list-style:none;color:var(--mute);font-size:.98em}
+.facts b{color:var(--ink);font-weight:400;font-family:var(--hd2);font-size:.85em;letter-spacing:.08em;text-transform:uppercase;color:var(--gold)}
+/* about */
+.split{display:grid;gap:2rem;grid-template-columns:1fr}
+@media(min-width:800px){.split{grid-template-columns:1.2fr 1fr;gap:4rem;align-items:start}}
+#sobre .lead::first-letter{font-family:var(--hd);font-weight:900;float:left;font-size:3.8em;line-height:.8;padding:.1em .12em 0 0;color:var(--blood)}
+.quote{margin:0;padding:1.6rem 1.7rem;background:var(--panel);border:1px solid var(--line);border-left:4px solid var(--blood);box-shadow:inset 0 0 0 3px var(--panel),inset 0 0 0 4px var(--line),0 8px 22px rgba(0,0,0,.25);font:italic 400 1.35em/1.45 var(--bd)}
+/* timeline */
+.tl{list-style:none;margin:2.2rem 0 0;padding:0;position:relative}
+.tl::before{content:"";position:absolute;left:11px;top:6px;bottom:6px;width:2px;background:linear-gradient(var(--gold),var(--blood))}
+.tl li{position:relative;padding:0 0 2rem 3rem}
+.tl li::before{content:"";position:absolute;left:3px;top:.35em;width:18px;height:18px;transform:rotate(45deg);background:var(--bg);border:2px solid var(--gold);box-shadow:0 0 0 3px var(--bg2)}
+.alt .tl li::before{background:var(--bg2);box-shadow:0 0 0 3px var(--bg2)}
+.tl li:last-child::before{border-color:var(--blood);background:var(--blood)}
+.tl h3{margin-bottom:.2rem;color:var(--gold)}
+.tl p{margin:.2rem 0}
+/* characters */
+.legend{display:flex;flex-wrap:wrap;gap:.4rem 1.4rem;margin:1rem 0 1.6rem;color:var(--mute);font-size:.98em}
+.legend i{display:inline-block;width:.8em;height:.8em;margin-right:.4em;transform:rotate(45deg);vertical-align:-.05em}
+.chars{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:1.2rem}
+.ch{background:var(--panel);border:1px solid var(--line);border-top:4px solid var(--c);padding:1.15rem 1.25rem 1.25rem;box-shadow:inset 0 0 0 3px var(--panel),inset 0 0 0 4px var(--line),0 6px 18px rgba(0,0,0,.22)}
+.ch.big{grid-column:1/-1;display:grid;gap:.4rem 1.5rem}
+@media(min-width:760px){.ch.big{grid-template-columns:14rem 1fr}.ch.big p{margin:0}}
+.ch p{margin:.35rem 0 0;font-size:1em;color:var(--mute)}
+.ch small{font:500 .78rem var(--hd2);letter-spacing:.08em;text-transform:uppercase;color:var(--c)}
+.rev{--c:var(--moss)}.rei{--c:var(--blood)}.mid{--c:var(--gold)}
+/* mechanics */
+.mech{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:2rem 2.5rem;margin-top:2.2rem}
+.mech svg{width:52px;height:52px;padding:7px;stroke:var(--gold);fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;margin-bottom:.8rem;border:1px solid var(--gold);border-radius:50%;box-shadow:0 0 0 3px var(--bg2),0 0 0 4px var(--line)}
+.mech p{color:var(--mute);margin:.3rem 0 0}
+.keys{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:1rem 2rem;margin-top:2rem}
+.keys h3{font-size:1rem;color:var(--gold);margin-bottom:.5rem;letter-spacing:.08em;text-transform:uppercase}
+.keys div{display:flex;align-items:center;gap:.7rem;padding:.35rem 0;border-bottom:1px dashed var(--line);font-size:1em}
+kbd{font:600 .8rem var(--hd2);min-width:2.4rem;text-align:center;padding:.2rem .55rem;background:var(--panel);border:1px solid var(--gold);border-bottom-width:3px;border-radius:3px;color:var(--gold);white-space:nowrap}
+.endings{display:grid;gap:1.2rem;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));margin-top:2rem}
+.endings div{padding:1.3rem 1.4rem;background:var(--panel);border:1px solid var(--line);box-shadow:inset 0 0 0 3px var(--panel),inset 0 0 0 4px var(--line)}
+.endings h3{color:var(--gold)}
+/* world / art */
+.two{display:grid;gap:2rem 3rem;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));margin-top:1.6rem}
+.two h3{color:var(--gold);margin-bottom:.4rem}
+.two p{color:var(--mute);margin:.3rem 0}
+.pal{display:flex;margin:1.4rem 0 0;height:44px;max-width:420px;border:2px solid var(--gold);box-shadow:0 0 0 3px var(--bg),0 0 0 4px var(--line)}
+.pal i{flex:1}
+.team{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:1.3rem;margin-top:2rem}
+.mem{background:var(--panel);border:1px solid var(--line);border-top:4px solid var(--c);padding:1.5rem 1.5rem 1.6rem;box-shadow:inset 0 0 0 3px var(--panel),inset 0 0 0 4px var(--line),0 6px 18px rgba(0,0,0,.22)}
+.mem .ini{width:56px;height:56px;border-radius:50%;border:2px solid var(--c);display:grid;place-items:center;font:700 1.5rem var(--hd);color:var(--c);margin-bottom:.9rem}
+.mem .ph{display:block;width:96px;height:96px;border-radius:50%;object-fit:cover;border:3px solid var(--c);box-shadow:0 0 0 3px var(--panel),0 0 0 4px var(--c);margin:.3rem 0 1.2rem .3rem}
+.mem small{font:500 .8rem var(--hd2);letter-spacing:.08em;text-transform:uppercase;color:var(--c)}
+.mem p{margin:.7rem 0 0;color:var(--mute);font-size:1em}
+footer{padding:3rem 0 4rem;border-top:3px double var(--gold);text-align:center;color:var(--mute);font-size:1em}
+footer p{margin:.4rem auto}
+footer svg{width:48px;margin:0 auto 1rem}
+</style>
+</head>
+<body>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+<defs>
+<symbol id="logo" viewBox="0 0 64 64">
+<path d="M32 3 57 11v21c0 15-10 25-25 30C17 57 7 47 7 32V11z" fill="#17131f" stroke="#d8b45a" stroke-width="2.5" stroke-linejoin="round"/>
+<circle cx="32" cy="22" r="8" fill="#c0394b"/>
+<path d="M9 44 22 28l8 10 8-14 18 20v6c-3 8-11 13-24 17C20 57 12 52 9 44z" fill="#0c0b13"/>
+<path d="M32 12v40M26 40h12" stroke="#d8b45a" stroke-width="2.6" stroke-linecap="round"/>
+<path d="M32 12l-2.4 5h4.8z" fill="#d8b45a"/>
+</symbol>
+<symbol id="orn" viewBox="0 0 240 16"><path d="M2 8H98M142 8H238" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" fill="none"/><path d="M120 1l7 7-7 7-7-7z M104 8l4-3 4 3-4 3z M128 8l4-3 4 3-4 3z" fill="currentColor"/></symbol>
+</defs>
+</svg>
+
+<nav aria-label="Principal"><div class="wrap">
+<a class="brand" href="#topo"><svg width="32" height="32" role="img" aria-label="Decennium"><use href="#logo"/></svg><span>Decennium</span></a>
+<div class="links"><a href="#sobre">O jogo</a><a href="#historia">História</a><a href="#personagens">Personagens</a><a href="#mecanicas">Mecânicas</a><a href="#mundo">Mundo</a><a href="#equipe">Equipe</a></div>
+</div></nav>
+
+<header class="hero" id="topo">
+<div class="wrap">
+<svg class="emblem" role="img" aria-label="Brasão de Decennium: escudo com espada sobre um vale"><use href="#logo"/></svg>
+<h1>Decennium</h1>
+<p class="sub">Uma revolução, dois irmãos e escolhas que não voltam atrás.</p>
+<div class="btns"><a class="btn p" href="#historia">Conhecer a história</a><a class="btn" href="#mecanicas">Ver as mecânicas</a></div>
+<ul class="facts"><li><b>Gênero:</b> RPG 2D isométrico</li><li><b>Engine:</b> Unity</li><li><b>Arte:</b> pixel art</li><li><b>Plataforma:</b> PC primeiro</li></ul>
+</div>
+<div class="scene" aria-hidden="true">
+<svg viewBox="0 0 1200 230" preserveAspectRatio="xMidYMax slice">
+<defs>
+<path id="pine" d="M0 0L20 40H10L32 76H-32L-10 40H-20z"/>
+<radialGradient id="glow" cx=".5" cy=".5" r=".5"><stop offset="0" stop-color="#e0b04a" stop-opacity=".45"/><stop offset="1" stop-color="#e0b04a" stop-opacity="0"/></radialGradient>
+</defs>
+<circle cx="900" cy="96" r="34" fill="#c2412f" opacity=".85"/>
+<circle cx="900" cy="96" r="64" fill="#c2412f" opacity=".12"/>
+<path d="M0 170 120 90 220 140 350 60 500 150 700 130 850 80 980 140 1100 100 1200 150V230H0z" fill="#2b1a14"/>
+<g class="mist"><path d="M-60 160C100 130 240 175 400 152s300-30 460 0 260 20 400-10V230H-60z" fill="#5a2418" opacity=".55"/></g>
+<path d="M0 205C200 175 400 190 600 152S1000 185 1200 178V230H0z" fill="#100a07"/>
+<ellipse cx="600" cy="140" rx="170" ry="60" fill="url(#glow)" class="torch"/>
+<g fill="#0a0605" stroke="#0a0605">
+<rect x="490" y="140" width="220" height="40" stroke="none"/>
+<path d="M486 137H714" stroke-width="9" stroke-dasharray="9 8" fill="none"/>
+<rect x="520" y="112" width="36" height="68" stroke="none"/><path d="M512 70 538 112" stroke="none"/>
+<path d="M514 112 538 70 562 112z" stroke="none"/>
+<rect x="644" y="112" width="36" height="68" stroke="none"/>
+<path d="M638 112 662 70 686 112z" stroke="none"/>
+<rect x="578" y="64" width="44" height="116" stroke="none"/>
+<path d="M574 64H626" stroke-width="9" stroke-dasharray="9 8" fill="none"/>
+<path d="M572 62 600 20 628 62z" stroke="none"/>
+<path d="M600 22V6" stroke-width="2" fill="none"/>
+<path d="M600 6 620 11 600 16z" fill="#c2412f" stroke="none"/>
+<path d="M538 70V56M662 70V56" stroke-width="2" fill="none"/>
+<path d="M538 56 552 60 538 64zM662 56 676 60 662 64z" fill="#c2412f" stroke="none"/>
+</g>
+<g fill="#e0b04a" class="torch">
+<rect x="597" y="82" width="6" height="12"/><rect x="597" y="108" width="6" height="12"/>
+<rect x="535" y="128" width="5" height="10"/><rect x="660" y="128" width="5" height="10"/>
+<path d="M588 180V160a12 12 0 0 1 24 0V180z" opacity=".85"/>
+</g>
+<g fill="#0a0605">
+<use href="#pine" transform="translate(180 126)"/><use href="#pine" transform="translate(250 144) scale(.8)"/>
+<use href="#pine" transform="translate(960 130)"/><use href="#pine" transform="translate(1040 146) scale(.85)"/>
+<use href="#pine" transform="translate(380 150) scale(.7)"/><use href="#pine" transform="translate(820 152) scale(.7)"/>
+</g>
+<path d="M0 208C300 192 500 212 700 198S1000 206 1200 196V230H0z" fill="#080504"/>
+</svg>
+</div>
+</header>
+
+<main>
+<section id="sobre"><div class="wrap split">
+<div>
+<h2>Nem toda história termina bem</h2><svg class="orn" aria-hidden="true" viewBox="0 0 240 16"><use href="#orn"/></svg>
+<p class="lead">Decennium é um RPG 2D inspirado em <em>Undertale</em>. O jogo coloca o jogador diante de um governo corrupto e decadente e de decisões que cobram um preço.</p>
+<p>A proposta é refletir sobre as escolhas que fazemos na vida: sempre existe a opção de agir com ética em relação aos outros. Na adolescência, decisões por impulso podem pesar no futuro, e o jogo convida a pensar de forma mais racional e sensata.</p>
+</div>
+<blockquote class="quote">“Grande parte das ações do jogador terá uma consequência.”<p style="font:500 .8rem var(--hd);color:var(--mute);margin-top:.8rem">Game Design Document, versão 1.1</p></blockquote>
+</div></section>
+
+<section class="alt" id="historia"><div class="wrap">
+<h2>A história</h2><svg class="orn" aria-hidden="true" viewBox="0 0 240 16"><use href="#orn"/></svg>
+<p class="lead">Como o herói que libertou o vale se tornou o tirano que o vale precisa derrubar.</p>
+<ol class="tl">
+<li><h3>Terra Viridis e o Império Philosophorum</h3><p>Antiga província próspera, famosa por educação, infraestrutura e filósofos. A crise do império e a rigidez de sua elite trazem guerras internas e dão origem à Cultura Pugnare, em que o combate é o único caminho.</p></li>
+<li><h3>A nação de Homines</h3><p>Após um cessar-fogo, os povos criam uma nação baseada na igualdade. As elites ricas dominam o parlamento, impõem a segregação e substituem a igualdade por uma “civilização” só delas. Começa a guerra civil.</p></li>
+<li><h3>Ludovicus, o Herói do Vale</h3><p>O comandante mais justo e popular vence a elite e funda o Império de Bersabe. Prosperidade e avanços científicos marcam os primeiros anos.</p></li>
+<li><h3>O Tirano de Decennium</h3><p>Ludovicus concentra poder, silencia opositores e restringe a liberdade em nome da ordem. Surge a revolução, liderada por Lonathan, irmão do rei.</p></li>
+<li><h3>Pietrus Henricus entra na guerra</h3><p>Treinando para lutar no coliseu, Pietrus vê seu posto invadido, é capturado e passa a combater ao lado dos revolucionários. Numa missão em uma vila próxima, uma emboscada o separa do grupo.</p></li>
+<li><h3>O Palácio e o Coliseu Real</h3><p>Pietrus enfrenta Alice Stella, é capturado e levado ao coliseu, onde centenas de prisioneiros lutam até restarem dez. Ali ele conhece Laura e entende o que o governo esconde.</p></li>
+<li><h3>A batalha final por Bersabe</h3><p>Alianças inesperadas, uma espada que absorve a luz e a revelação de que a guerra é também uma disputa entre dois irmãos gêmeos. O desfecho depende das suas escolhas: são dois finais, e um deles é pesado.</p></li>
+</ol>
+</div></section>
+
+<section id="personagens"><div class="wrap">
+<h2>Personagens</h2><svg class="orn" aria-hidden="true" viewBox="0 0 240 16"><use href="#orn"/></svg>
+<p class="lead">Quase todos acreditam estar do lado certo.</p>
+<div class="legend"><span><i style="background:var(--moss)"></i>Revolução</span><span><i style="background:var(--blood)"></i>Reino</span><span><i style="background:var(--gold)"></i>Entre os dois lados</span></div>
+<div class="chars">
+<article class="ch big rev"><div><h3>Pietrus Henricus</h3><small>Protagonista</small></div><p>Idealista, com forte senso de justiça. Presenciou o assassinato do pai pelas forças do governo ainda criança. Não busca vingança nem poder: quer um mundo em que os cidadãos vivam livres da opressão.</p></article>
+<article class="ch rev"><h3>Lonathan</h3><small>Líder da revolução</small><p>Irmão gêmeo de Ludovicus. Acredita que ainda há bondade nas pessoas e dedicou a vida à liberdade do povo.</p></article>
+<article class="ch rei"><h3>Ludovicus</h3><small>Rei de Bersabe</small><p>O libertador que virou tirano. Para ele, só a ordem absoluta impede o retorno do caos.</p></article>
+<article class="ch mid"><h3>Alice Stella</h3><small>Prodígio do coliseu</small><p>Mais jovem a entrar no exército, aos 19 anos. Leal às instituições, pode se tornar aliada de Pietrus.</p></article>
+<article class="ch mid"><h3>Alphonsus Gustavus</h3><small>Anti-herói</small><p>O “soldado infernal”. Caça os cavaleiros do reino para resgatar a irmã aprisionada.</p></article>
+<article class="ch rev"><h3>Laura Morais</h3><small>Prisioneira do coliseu</small><p>Gentil e altruísta, mantém a fé nas pessoas mesmo após anos de cativeiro.</p></article>
+<article class="ch rev"><h3>Losephus Marcus</h3><small>Ex-cavaleiro</small><p>Expulso do reino após o desaparecimento do filho. Pode ser conquistado com desafios e enigmas.</p></article>
+<article class="ch rei"><h3>Adrianus Malaesiae</h3><small>Cavaleiro de elite</small><p>Guardião das fronteiras. Espadachim e faixa preta em capoeira, luta com técnica e disciplina.</p></article>
+<article class="ch rei"><h3>Mark Draco</h3><small>Cavaleiro Atirador</small><p>Atirador de elite de mira quase infalível. Enfrentá-lo de frente é arriscado demais.</p></article>
+</div>
+</div></section>
+
+<section class="alt" id="mecanicas"><div class="wrap">
+<h2>Mecânicas</h2><svg class="orn" aria-hidden="true" viewBox="0 0 240 16"><use href="#orn"/></svg>
+<p class="lead">Combate em tempo real, exploração isométrica e um mundo que reage ao que você faz.</p>
+<div class="mech">
+<div><svg viewBox="0 0 48 48" aria-hidden="true"><path d="M24 6v22M17 14l7-8 7 8M10 30c4 8 10 12 14 12s10-4 14-12M24 28v14"/></svg><h3>Escolhas e consequências</h3><p>Decisões levam a histórias diferentes com certos personagens, fases novas e finais alternativos. Aliados podem morrer ou mudar de lado.</p></div>
+<div><svg viewBox="0 0 48 48" aria-hidden="true"><path d="M10 38 38 10M32 8h8v8M14 34l-6 6M8 34l6 6"/></svg><h3>Combate em tempo real</h3><p>Ataque com a arma equipada, esquive e use habilidades mágicas. Chefes variam de força bruta a precisão letal.</p></div>
+<div><svg viewBox="0 0 48 48" aria-hidden="true"><path d="M24 5c8 8 12 14 12 21a12 12 0 0 1-24 0c0-4 2-7 5-10 0 4 2 6 4 6 0-6-1-11 3-17z"/></svg><h3>Magia sombria</h3><p>Explosão Sombria, Rajada de Magia e Disparo de Magia dão variedade ao estilo de luta.</p></div>
+<div><svg viewBox="0 0 48 48" aria-hidden="true"><path d="M14 16h20l4 24H10zM18 16a6 6 0 0 1 12 0M20 26h8"/></svg><h3>Inventário e progressão</h3><p>Gerencie armas, roupas e atributos como nível, vida e defesa. Itens evoluem com upgrades e há skins desbloqueáveis.</p></div>
+<div><svg viewBox="0 0 48 48" aria-hidden="true"><path d="M6 36 24 8l18 28zM18 36l6-9 6 9"/></svg><h3>Exploração</h3><p>Mapas amplos com segredos, puzzles e áreas para desbloquear, de Terra Viridis ao Coliseu.</p></div>
+<div><svg viewBox="0 0 48 48" aria-hidden="true"><path d="M8 24h12M28 24h12M16 16l-8 8 8 8M32 16l8 8-8 8"/></svg><h3>Eventos em tempo real</h3><p>As cenas acontecem durante o jogo, com NPCs em movimento, para mostrar o efeito de cada escolha no mundo.</p></div>
+</div>
+
+<div class="endings">
+<div><h3>Sem recompensas fáceis</h3><p style="color:var(--mute);margin:.4rem 0 0">Não há sistema de recompensas além da reflexão. A progressão é de habilidades, e também emocional: dúvida, medo e culpa acompanham as perdas.</p></div>
+<div><h3>Dois finais</h3><p style="color:var(--mute);margin:.4rem 0 0">Ambos são vitoriosos para o protagonista, mas um deles pode ser pesado para quem joga.</p></div>
+</div>
+
+<h2 style="margin-top:3.5rem;font-size:1.6rem">Controles</h2><svg class="orn" aria-hidden="true" viewBox="0 0 240 16"><use href="#orn"/></svg>
+<div class="keys">
+<div style="display:block;border:0"><h3>Movimento</h3><div><kbd>W</kbd>frente</div><div><kbd>A</kbd>esquerda</div><div><kbd>S</kbd>trás</div><div><kbd>D</kbd>direita</div></div>
+<div style="display:block;border:0"><h3>Combate</h3><div><kbd>Clique esq.</kbd>atacar</div><div><kbd>Clique dir.</kbd>esquivar</div><div><kbd>R</kbd>Explosão Sombria</div><div><kbd>J</kbd>Rajada de Magia</div><div><kbd>F</kbd>Disparo de Magia</div></div>
+<div style="display:block;border:0"><h3>Outros</h3><div><kbd>I</kbd>inventário</div><div><kbd>C</kbd>agachar</div><div><kbd>Esc</kbd>pausa</div><div><kbd>Roda</kbd>zoom da câmera</div></div>
+</div>
+</div></section>
+
+<section id="mundo"><div class="wrap">
+<h2>O mundo e a arte</h2><svg class="orn" aria-hidden="true" viewBox="0 0 240 16"><use href="#orn"/></svg>
+<div class="two">
+<div><h3>Inimigos</h3><p><b>Forças Reais:</b> soldados disciplinados, moldados pela Cultura Pugnare.</p><p><b>Ladrões:</b> grupos ágeis e furtivos das periferias devastadas pela guerra.</p><p><b>Cavaleiros do Império:</b> a elite militar, que costuma aparecer como chefe de batalha.</p></div>
+<div><h3>Cenários</h3><p>Terra Viridis, Império de Bersabe, a vila próxima, o Império Quálita, o Palácio Real e o Coliseu Real. O mundo escurece e fica mais hostil conforme a história avança.</p></div>
+<div><h3>Visual e som</h3><p>Pixel art detalhada, com luz dramática e atmosfera melancólica, inspirada em Undertale, Dark Souls e Hollow Knight. A trilha mistura orquestral sombrio e medieval melancólico; o som reforça a culpa com sussurros e batimentos.</p>
+<div class="pal" role="img" aria-label="Paleta: roxo escuro, vinho, dourado e verde musgo"><i style="background:#12111a"></i><i style="background:#4b1f2d"></i><i style="background:#c0394b"></i><i style="background:#d8b45a"></i><i style="background:#7fa65a"></i></div></div>
+</div>
+</div></section>
+</main>
+
+<section class="alt" id="equipe"><div class="wrap">
+<h2>A equipe</h2><svg class="orn" aria-hidden="true" viewBox="0 0 240 16"><use href="#orn"/></svg>
+<p class="lead">Três pessoas, três ofícios, um mesmo vale.</p>
+<div class="team">
+<article class="mem" style="--c:var(--blood)"><img class="ph" src="data:image/jpeg;base64,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" width="96" height="96" alt="Foto de Ryan Henrique"><h3>Ryan Henrique</h3><small>Roteirista e autor do jogo</small><p>Criou o universo, a história e os personagens de Decennium. Escreve o roteiro e os diálogos, constrói o contexto histórico e político do mundo e planeja as missões que conduzem a narrativa, com foco em poder, desigualdade e revolução.</p></article>
+<article class="mem" style="--c:var(--gold)"><img class="ph" src="data:image/jpeg;base64,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" width="96" height="96" alt="Foto de João Pedro"><h3>João Pedro</h3><small>Artista do jogo</small><p>Cuida da identidade visual do projeto. Transforma os conceitos da história em personagens, cenários e ambientes, mantendo um estilo coerente com o tema sombrio e a proposta do jogo.</p></article>
+<article class="mem" style="--c:var(--moss)"><img class="ph" src="data:image/jpeg;base64,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" width="96" height="96" alt="Foto de Adryan Kauê"><h3>Adryan Kauê</h3><small>Programador do jogo</small><p>Responsável pela parte técnica. Implementa movimentação, combate, interação e os demais sistemas, integrando narrativa e arte para que a experiência seja funcional e consistente.</p></article>
+</div>
+</div></section>
+
+<footer><div class="wrap">
+<svg viewBox="0 0 64 64" role="img" aria-label="Brasão"><use href="#logo"/></svg>
+<p>Adryan Kauê Santos de Oliveira, João Pedro Garcia Silva e Ryan Henrique Almeida da Silva</p>
+<p>Orientador: Luiz Ângelo</p>
+<p>Trabalho de conclusão do curso Técnico em Programação de Jogos Digitais, ETEC Professor Fausto Mazzola, Avaré, 2026.</p>
+</div></footer>
+</body>
+</html>
